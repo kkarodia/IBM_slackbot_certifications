@@ -246,8 +246,8 @@ def get_certs_by_name(employeename, query):
 @app.input(CertQuerySchema, 'query')
 
 def get_certs_by_keyword(tkeyword, query):
-    """Get patients by gender
-    Retrieve all patient records with the specified gender
+    """Get CERTS by KEYWORD
+    Retrieve all records with the specified KEYWORD
     """
     pagination = CertModel.query.filter(
         (CertModel.certificatedescription.ilike(f'%{tkeyword}%')) |
