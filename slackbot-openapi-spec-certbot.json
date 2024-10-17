@@ -1,4 +1,5 @@
 {
+  "openapi": "3.0.3",
   "info": {
     "title": "Events API for Watson Assistant",
     "version": "1.0.1"
@@ -50,8 +51,7 @@
         },
         "summary": "Greeting",
         "description": "health check"
-      }
-    },
+      },
       "post": {
         "parameters": [],
         "responses": {
@@ -182,7 +182,7 @@
     },
     "/certifications/name/{employeename}": {
       "get": {
-        "summary": "Get  certs by name table",
+        "summary": "Get certs by name table",
         "description": "Retrieve all cert records in an HTML table format by name",
         "parameters": [
           {
@@ -206,12 +206,12 @@
           },
           {
             "in": "path",
-                    "name": "employeename",
-                    "schema": {
-                      "type": "string"
-                    },
-              "required": true
-            }
+            "name": "employeename",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
         ],
         "responses": {
           "200": {
@@ -287,14 +287,13 @@
             }
           },
           {
-          "in": "path",
-                  "name": "tkeyword",
-                  "schema": {
-                    "type": "string"
-                  },
+            "in": "path",
+            "name": "tkeyword",
+            "schema": {
+              "type": "string"
+            },
             "required": true
           }
-
         ],
         "responses": {
           "200": {
@@ -400,8 +399,8 @@
           }
         ]
       }
-    },
-  "openapi": "3.0.3",
+    }
+  },
   "components": {
     "schemas": {
       "ValidationError": {
@@ -492,7 +491,8 @@
             "type": "string"
           },
           "expirydate": {
-            "type": "date"
+            "type": "string",
+            "format": "date"
           }
         }
       },
@@ -534,10 +534,10 @@
             "maxLength": 1000
           },
           "expirydate": {
-            "type": "date"
+            "type": "string",
+            "format": "date"
           }
         }
-        
       },
       "CertsIn": {
         "type": "object",
@@ -563,7 +563,8 @@
             "maxLength": 1000
           },
           "expirydate": {
-            "type": "date"
+            "type": "string",
+            "format": "date"
           }
         },
         "required": [
@@ -571,7 +572,6 @@
           "certificatetype",
           "certificatedescription",
           "certificatelink"
-
         ]
       }
     },
@@ -582,6 +582,5 @@
         "in": "header"
       }
     }
-  
   }
 }
