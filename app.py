@@ -146,7 +146,7 @@ class CertQuerySchema(Schema):
     per_page = Integer(load_default=20, validate=Range(max=30))
 
 class CerttsOutSchema(Schema):
-    patients = List(Nested(CertOutSchema))
+    certs = List(Nested(CertOutSchema))
     pagination = Nested(PaginationSchema)
 
 # register a callback to verify the token
