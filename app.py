@@ -214,9 +214,23 @@ def get_certs_by_name(employeename, query):
         page=query['page'],
         per_page=query['per_page']
     )
+    def get_page_url(page):
+        return url_for('get_certs_by_name', employeename=employeename, page=page, per_page=query['per_page'], _external=True)
+
+    pagination_info = {
+        'page': pagination.page,
+        'per_page': pagination.per_page,
+        'pages': pagination.pages,
+        'total': pagination.total,
+        'current': get_page_url(pagination.page),
+        'first': get_page_url(1),
+        'last': get_page_url(pagination.pages),
+        'prev': get_page_url(pagination.prev_num) if pagination.has_prev else None,
+        'next': get_page_url(pagination.next_num) if pagination.has_next else None
+    }
     certs_data = {
         'certs': pagination.items,
-        'pagination': pagination_builder(pagination)
+        'pagination': pagination_info
     }
 
     # Start building the HTML table
