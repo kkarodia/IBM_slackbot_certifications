@@ -206,12 +206,11 @@ def get_valid_certs(query):
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
-
-def get_certs_by_name(tname, query):
-    """Get patients by gender
-    Retrieve all patient records with the specified gender
+def get_certs_by_name(employeename, query):
+    """Get certifications by name
+    Retrieve all certification records with the specified employee name
     """
-    pagination = CertModel.query.filter(CertModel.employeename == tname).paginate(
+    pagination = CertModel.query.filter(CertModel.employeename == employeename).paginate(
         page=query['page'],
         per_page=query['per_page']
     )
@@ -223,9 +222,9 @@ def get_certs_by_name(tname, query):
     # Start building the HTML table
     table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
     
-    # Add each patient to the table
+    # Add each certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(cert.expirydate)}</td></tr>"
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
     
     # Close the table
     table_html += "</table>"
