@@ -143,7 +143,7 @@ class CertInSchema(Schema):
 # use with pagination
 class CertQuerySchema(Schema):
     page = Integer(load_default=1)
-    per_page = Integer(load_default=20, validate=Range(max=30))
+    per_page = Integer(load_default=20, validate=Range(max=300))
 
 class CerttsOutSchema(Schema):
     certs = List(Nested(CertOutSchema))
