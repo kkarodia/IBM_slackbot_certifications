@@ -117,7 +117,7 @@ class CertModel(db.Model):
     certificatetype = db.Column('CERTIFICATETYPE',db.String(32))
     certificatedescription = db.Column('CERTIFICATEDESCRIPTION',db.String(50))
     certificatelink = db.Column('CERTIFICATELINK',db.String(1000))
-    expirydate = db.Column('EXPIRYDATE',db.Date)
+    expirydate = db.Column('EXPIRYDATE', db.Date, nullable=True)
     
     
 
@@ -128,7 +128,7 @@ class CertOutSchema(Schema):
     certificatetype = String()
     certificatedescription = String()
     certificatelink =String()
-    expirydate = Date()
+    expirydate = Date(allow_none=True)
    
     
    
@@ -139,7 +139,7 @@ class CertInSchema(Schema):
     certificatetype = String(required=True)
     certificatedescription = String(required=True)
     certificatelink =String(required=True)
-    expirydate = Date(required=False)
+    expirydate = Date(required=False, allow_none=True)
     
 # use with pagination
 class CertQuerySchema(Schema):
