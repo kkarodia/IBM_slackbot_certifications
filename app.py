@@ -123,6 +123,7 @@ class CertModel(db.Model):
 
 # the Python output for Certifications
 class CertOutSchema(Schema):
+    id=Integer()
     employeename = String()
     certificatetype = String()
     certificatedescription = String()
