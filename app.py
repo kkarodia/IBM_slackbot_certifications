@@ -158,6 +158,90 @@ def verify_token(token):
     else:
         return None
 
+#get records by validity date(no date)
+@app.get('/certifications/nodate')
+@app.output(CertOutSchema)
+@app.auth_required(auth)
+@app.input(CertQuerySchema, 'query')
+def get_valid_certs(query):
+    """Get certifications
+    Retrieve all certification records that do not expire
+    """
+    
+    pagination = CertModel.query.filter(
+        CertModel.expirydate.is_(None)
+    ).paginate(
+        page=query['page'],
+        per_page=query['per_page']
+    )
+    
+    certs_data = {
+        'certs': pagination.items,
+        'pagination': pagination_builder(pagination)
+    }
+
+    # Start building the HTML table
+    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+
+    # Add each valid certification to the table
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+
+    # Close the table
+    table_html += "</table>"
+
+    # Store the table in a variable
+    valid_certs_table = table_html
+
+    # Return the table as part of a JSON response
+    return jsonify({
+        "table": valid_certs_table,
+        "pagination": certs_data['pagination'],
+        "message": "Certification data retrieved successfully"
+    })
+
+#get records by validity date (invalid)
+@app.get('/certifications/invalid')
+@app.output(CertOutSchema)
+@app.auth_required(auth)
+@app.input(CertQuerySchema, 'query')
+def get_valid_certs(query):
+    """Get invalid certifications
+    Retrieve all certification records that have expired (expiry date is before or the current date)
+    """
+    current_date = datetime.now().date()
+    
+    pagination = CertModel.query.filter(
+        CertModel.expirydate < current_date
+    ).paginate(
+        page=query['page'],
+        per_page=query['per_page']
+    )
+    
+    certs_data = {
+        'certs': pagination.items,
+        'pagination': pagination_builder(pagination)
+    }
+
+    # Start building the HTML table
+    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+
+    # Add each valid certification to the table
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+
+    # Close the table
+    table_html += "</table>"
+
+    # Store the table in a variable
+    valid_certs_table = table_html
+
+    # Return the table as part of a JSON response
+    return jsonify({
+        "table": valid_certs_table,
+        "pagination": certs_data['pagination'],
+        "message": "inValid certification data retrieved successfully"
+    })
 
 #get records by validity date
 @app.get('/certifications/valid')
@@ -272,9 +356,23 @@ def get_certs_by_keyword(tkeyword, query):
         per_page=query['per_page']
     )
     
+    def get_page_url(page):
+        return url_for('get_certs_by_keyword', tkeyword=tkeyword, page=page, per_page=query['per_page'], _external=True)
+
+    pagination_info = {
+        'page': pagination.page,
+        'per_page': pagination.per_page,
+        'pages': pagination.pages,
+        'total': pagination.total,
+        'current': get_page_url(pagination.page),
+        'first': get_page_url(1),
+        'last': get_page_url(pagination.pages),
+        'prev': get_page_url(pagination.prev_num) if pagination.has_prev else None,
+        'next': get_page_url(pagination.next_num) if pagination.has_next else None
+    }
     certs_data = {
         'certs': pagination.items,
-        'pagination': pagination_builder(pagination)
+        'pagination': pagination_info
     }
 
     # Start building the HTML table
@@ -369,7 +467,7 @@ def create_record(data):
     return cert
 
 
-# (re-)create the event table with sample records
+# (re-)create the cert table with sample records
 @app.post('/database/recreate')
 @app.input({'confirmation': Boolean(load_default=False)}, location='query')
 #@app.output({}, 201)
