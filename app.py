@@ -163,7 +163,7 @@ def verify_token(token):
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
-def get_nodate_certs(query):
+def get_valid_certs(query):
     """Get certifications
     Retrieve all certification records that do not expire
     """
@@ -205,7 +205,7 @@ def get_nodate_certs(query):
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
-def get_invalid_certs(query):
+def get_valid_certs(query):
     """Get invalid certifications
     Retrieve all certification records that have expired (expiry date is before or the current date)
     """
@@ -380,7 +380,7 @@ def get_certs_by_keyword(tkeyword, query):
 
     # Add each matching certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(cert.expirydate)}</td></tr>"
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
     # Close the table
     table_html += "</table>"
@@ -397,7 +397,7 @@ def get_certs_by_keyword(tkeyword, query):
 
 
 #retrieve records with same certificate type 
-@app.get('/certifications/certtype/<string:certificatetype>')
+@app.get('/certifications/certtype/<string:tcerttype>')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
@@ -436,7 +436,7 @@ def get_certs_by_certtype(tcerttype, query):
     
     # Add each patient to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(cert.expirydate)}</td></tr>"
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
     
     # Close the table
     table_html += "</table>"
