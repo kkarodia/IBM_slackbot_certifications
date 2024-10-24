@@ -1,0 +1,1171 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+      "title": "Events API for Watson Assistant",
+      "version": "1.0.1"
+  },
+  "tags": [],
+  "servers": [
+      {
+          "description": "Code Engine deployment",
+          "url": "https://{appname}.{projectid}.{region}.codeengine.appdomain.cloud",
+          "variables": {
+              "appname": {
+                  "default": "slackbot-backend",
+                  "description": "application name"
+              },
+              "projectid": {
+                  "default": "projectid",
+                  "description": "the Code Engine project ID"
+              },
+              "region": {
+                  "default": "us-south",
+                  "description": "the deployment region, e.g., us-south"
+              }
+          }
+      },
+      {
+          "description": "local test",
+          "url": "http://127.0.0.1:{port}",
+          "variables": {
+              "port": {
+                  "default": "5000",
+                  "description": "local port to use"
+              }
+          }
+      }
+  ],
+  "paths": {
+      "/": {
+          "get": {
+              "parameters": [],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {}
+                          }
+                      },
+                      "description": "Successful response"
+                  }
+              },
+              "summary": "Greeting",
+              "description": "health check"
+          }
+      },
+      "/Certifications": {
+          "post": {
+              "parameters": [],
+              "responses": {
+                  "201": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/CertOut"
+                              }
+                          }
+                      },
+                      "description": "Successful response"
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      },
+                      "description": "Validation error"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      },
+                      "description": "Authentication error"
+                  }
+              },
+              "summary": "Insert a new record",
+              "description": "Insert a new record with the given attributes.",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/CertIn"
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/valid": {
+          "get": {
+              "summary": "Get valid certs table",
+              "description": "Retrieve all valid cert records in an HTML table format",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/nodate": {
+          "get": {
+              "summary": "Get no expiry date certs table",
+              "description": "Retrieve all no expiry date cert records in an HTML table format",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/invalid": {
+          "get": {
+              "summary": "Get INvalid certs table",
+              "description": "Retrieve all INvalid cert records in an HTML table format",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/name/{employeename}": {
+          "get": {
+              "summary": "Get certs by name table",
+              "description": "Retrieve all cert records in an HTML table format by name",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "employeename",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/certtype/{tcerttype}": {
+          "get": {
+              "summary": "Get certs by cert type table",
+              "description": "Retrieve all cert records in an HTML table format by cert type",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "tcerttype",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/name/{employeename}/valid": {
+          "get": {
+              "summary": "Get by name and by validation",
+              "description": "Retrieve all cert records in an HTML table format by employee name and valid certs",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "employeename",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/name/{employeename}/invalid": {
+          "get": {
+              "summary": "Get by name and by invalidation",
+              "description": "Retrieve all cert records in an HTML table format by employee name and invalid certs",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "employeename",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/name/{employeename}/nodate": {
+          "get": {
+              "summary": "Get by name and by no expiration date ",
+              "description": "Retrieve all cert records in an HTML table format by employee name and certs that dont expire",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "employeename",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/name/{employeename}/{tkeyword}": {
+          "get": {
+              "summary": "Get certifications by name and keyword ",
+              "description": "Retrieve all certification records for the specified employee name and keyword.The search is case-insensitive.",
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": false
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "employeename",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  },
+                  {
+                      "in": "path",
+                      "name": "tkeyword",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Validation error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Authentication error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      }
+                  }
+              },
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/certifications/keyword/{tkeyword}": {
+          "get": {
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "per_page",
+                      "schema": {
+                          "type": "integer",
+                          "default": 20,
+                          "maximum": 300
+                      },
+                      "required": true
+                  },
+                  {
+                      "in": "query",
+                      "name": "page",
+                      "required": false,
+                      "schema": {
+                          "type": "integer",
+                          "default": 1
+                      }
+                  },
+                  {
+                      "in": "path",
+                      "name": "tkeyword",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "table": {
+                                          "type": "string",
+                                          "description": "HTML table containing cert data"
+                                      },
+                                      "pagination": {
+                                          "$ref": "#/components/schemas/Pagination"
+                                      },
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Successful response"
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      },
+                      "description": "Validation error"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      },
+                      "description": "Authentication error"
+                  }
+              },
+              "summary": "records by keyword",
+              "description": "Retrieve all records of the same keyword",
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      },
+      "/database/recreate": {
+          "post": {
+              "parameters": [
+                  {
+                      "in": "query",
+                      "name": "confirmation",
+                      "required": false,
+                      "schema": {
+                          "type": "boolean",
+                          "default": false
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {}
+                          }
+                      },
+                      "description": "Successful response"
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ValidationError"
+                              }
+                          }
+                      },
+                      "description": "Validation error"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/HTTPError"
+                              }
+                          }
+                      },
+                      "description": "Authentication error"
+                  }
+              },
+              "summary": "Recreate the database schema",
+              "description": "Recreate the database schema and insert sample data.\nRequest must be confirmed by passing query parameter.",
+              "security": [
+                  {
+                      "ApiKeyAuth": []
+                  }
+              ]
+          }
+      }
+  },
+  "components": {
+      "schemas": {
+          "ValidationError": {
+              "properties": {
+                  "detail": {
+                      "type": "object",
+                      "properties": {
+                          "<location>": {
+                              "type": "object",
+                              "properties": {
+                                  "<field_name>": {
+                                      "type": "array",
+                                      "items": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "message": {
+                      "type": "string"
+                  }
+              },
+              "type": "object"
+          },
+          "HTTPError": {
+              "properties": {
+                  "detail": {
+                      "type": "object"
+                  },
+                  "message": {
+                      "type": "string"
+                  }
+              },
+              "type": "object"
+          },
+          "Pagination": {
+              "type": "object",
+              "properties": {
+                  "current": {
+                      "type": "string",
+                      "format": "url"
+                  },
+                  "first": {
+                      "type": "string",
+                      "format": "url"
+                  },
+                  "prev": {
+                      "type": "string",
+                      "format": "url"
+                  },
+                  "pages": {
+                      "type": "integer"
+                  },
+                  "last": {
+                      "type": "string",
+                      "format": "url"
+                  },
+                  "per_page": {
+                      "type": "integer"
+                  },
+                  "next": {
+                      "type": "string",
+                      "format": "url"
+                  },
+                  "total": {
+                      "type": "integer"
+                  },
+                  "page": {
+                      "type": "integer"
+                  }
+              }
+          },
+          "CertOut": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "integer"
+                  },
+                  "employeename": {
+                      "type": "string"
+                  },
+                  "certificatetype": {
+                      "type": "string"
+                  },
+                  "certificatedescription": {
+                      "type": "string"
+                  },
+                  "certificatelink": {
+                      "type": "string"
+                  },
+                  "expirydate": {
+                      "type": "string",
+                      "format": "date"
+                  }
+              }
+          },
+          "CertsOut": {
+              "type": "object",
+              "properties": {
+                  "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                  },
+                  "Certs": {
+                      "type": "array",
+                      "items": {
+                          "$ref": "#/components/schemas/CertOut"
+                      }
+                  }
+              }
+          },
+          "CertIn": {
+              "type": "object",
+              "properties": {
+                  "employeename": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 32
+                  },
+                  "certificatetype": {
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 32
+                  },
+                  "certificatedescription": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 50
+                  },
+                  "certificatelink": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                  },
+                  "expirydate": {
+                      "type": "string",
+                      "format": "date"
+                  }
+              }
+          },
+          "CertsIn": {
+              "type": "object",
+              "properties": {
+                  "employeename": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 32
+                  },
+                  "certificatetype": {
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 32
+                  },
+                  "certificatedescription": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 50
+                  },
+                  "certificatelink": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                  },
+                  "expirydate": {
+                      "type": "string",
+                      "format": "date"
+                  }
+              },
+              "required": [
+                  "employeename",
+                  "certificatetype",
+                  "certificatedescription",
+                  "certificatelink"
+              ]
+          }
+      },
+      "securitySchemes": {
+          "ApiKeyAuth": {
+              "type": "apiKey",
+              "name": "API_TOKEN",
+              "in": "header"
+          }
+      }
+  }
+}
