@@ -451,6 +451,65 @@ def get_certs_by_certtype(tcerttype, query):
         "message": "Certification data retrieved successfully"
     })
 
+#filter by name and by validation
+@app.get('/certifications/name/<string:employeename>/valid')
+@app.output(CertOutSchema)
+@app.auth_required(auth)
+@app.input(CertQuerySchema, 'query')
+def get_valid_certs_by_name(employeename, query):
+    """Get valid certifications by name
+    Retrieve all valid certification records (not expired) for the specified employee name.
+    The search is case-insensitive.
+    """
+    current_date = datetime.now().date()
+    
+    pagination = CertModel.query.filter(
+        db.func.lower(CertModel.employeename) == employeename.lower(),
+        CertModel.expirydate > current_date
+    ).paginate(
+        page=query['page'],
+        per_page=query['per_page']
+    )
+    
+    def get_page_url(page):
+        return url_for('get_valid_certs_by_name', employeename=employeename, page=page, per_page=query['per_page'], _external=True)
+
+    pagination_info = {
+        'page': pagination.page,
+        'per_page': pagination.per_page,
+        'pages': pagination.pages,
+        'total': pagination.total,
+        'current': get_page_url(pagination.page),
+        'first': get_page_url(1),
+        'last': get_page_url(pagination.pages),
+        'prev': get_page_url(pagination.prev_num) if pagination.has_prev else None,
+        'next': get_page_url(pagination.next_num) if pagination.has_next else None
+    }
+    
+    certs_data = {
+        'certs': pagination.items,
+        'pagination': pagination_info
+    }
+
+    # Start building the HTML table
+    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+    
+    # Add each valid certification to the table
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+    
+    # Close the table
+    table_html += "</table>"
+    
+    # Store the table in a variable
+    valid_certs_table = table_html
+    
+    # Return the table as part of a JSON response
+    return jsonify({
+        "table": valid_certs_table,
+        "pagination": certs_data['pagination'],
+        "message": f"Valid certification data retrieved successfully for {employeename}"
+    })
 
 # create a record
 @app.post('/Certifications')
