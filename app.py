@@ -397,7 +397,7 @@ def get_certs_by_keyword(tkeyword, query):
 
 
 #retrieve records with same certificate type 
-@app.get('/certifications/certtype/<string:>')
+@app.get('/certifications/certtype/<string:tcerttype>')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
