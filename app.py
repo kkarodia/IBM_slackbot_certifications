@@ -17,6 +17,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import abort, request, jsonify, url_for
 import html
 from datetime import datetime
+from sqlalchemy import text, func
+from sqlalchemy.sql import union_all
 
 # Set how this API should be titled and the current version
 API_TITLE='Events API for Watson Assistant'
@@ -284,6 +286,99 @@ def get_valid_certs(query):
         "table": valid_certs_table,
         "pagination": certs_data['pagination'],
         "message": "Valid certification data retrieved successfully"
+    })
+
+#nlp query
+@app.get('/certifications/nlp/<string:query_text>')
+@app.output(CertOutSchema)
+@app.auth_required(auth)
+@app.input(CertQuerySchema, 'query')
+def search_certifications_nlp(query_text, query):
+    """Natural language search for certifications
+    Search certifications using natural language query.
+    Filters out common words and searches in certificate type and employee name.
+    """
+    # List of stop words to filter out
+    stop_words = {
+        'i', 'want', 'to', 'search', 'the', 'for', 'a', 'and', 'or', 'of',
+        'let', 'me', 'see', 'that', 'need', 'be', 'shown',
+        'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being',
+        'this', 'which', 'who', 'whom', 'what', 'where', 'when', 'why',
+        'how', 'can', 'could', 'should', 'would', 'may', 'might', 'must',
+        'has', 'have', 'had', 'do', 'does', 'did', 'just', 'only',
+        'then', 'than', 'so', 'if', 'not', 'but', 'more', 'some',
+        'all', 'any', 'each', 'few', 'more', 'most', 'same', 'other',
+        'such', 'no', 'yes', 'now', 'about', 'above', 'after', 'again',
+        'against', 'along', 'also', 'among', 'around', 'at', 'before',
+        'between', 'by', 'during', 'except', 'for', 'from', 'in',
+        'inside', 'into', 'like', 'near', 'next', 'of', 'off', 'on',
+        'onto', 'out', 'over', 'past', 'since', 'through', 'to',
+        'toward', 'under', 'until', 'up', 'with', 'without'
+    }
+    
+    # Split the query text into words and filter out stop words
+    search_words = [word.lower() for word in query_text.split() if word.lower() not in stop_words]
+    
+    if not search_words:
+        return jsonify({
+            "table": "<table border='1'><tr><th>No results</th></tr></table>",
+            "message": "No valid search terms found after removing common words"
+        })
+
+    # Build the query
+    base_query = CertModel.query
+    
+    # Add conditions for each search word
+    for word in search_words:
+        base_query = base_query.filter(
+            (func.lower(CertModel.employeename).like(f'%{word}%'))| 
+            (func.lower(CertModel.certificatetype).like(f'%{word}%')) |
+            (func.lower(CertModel.certificatedescription).like(f'%{word}%'))
+        )
+    
+    # Apply pagination
+    pagination = base_query.paginate(
+        page=query['page'],
+        per_page=query['per_page']
+    )
+    
+    def get_page_url(page):
+        return url_for('search_certifications_nlp', 
+                      query_text=query_text, 
+                      page=page, 
+                      per_page=query['per_page'], 
+                      _external=True)
+
+    pagination_info = {
+        'page': pagination.page,
+        'per_page': pagination.per_page,
+        'pages': pagination.pages,
+        'total': pagination.total,
+        'current': get_page_url(pagination.page),
+        'first': get_page_url(1),
+        'last': get_page_url(pagination.pages),
+        'prev': get_page_url(pagination.prev_num) if pagination.has_prev else None,
+        'next': get_page_url(pagination.next_num) if pagination.has_next else None
+    }
+    
+    certs_data = {
+        'certs': pagination.items,
+        'pagination': pagination_info
+    }
+
+    # Build HTML table
+    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+    
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+    
+    table_html += "</table>"
+    
+    return jsonify({
+        "table": table_html,
+        "pagination": certs_data['pagination'],
+        "search_terms": search_words,
+        "message": f"Search results for: {query_text}"
     })
 
 #retrieve records with same name 
