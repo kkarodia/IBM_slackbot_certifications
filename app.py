@@ -163,7 +163,7 @@ def verify_token(token):
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
-def get_valid_certs(query):
+def get_nodate_certs(query):
     """Get certifications
     Retrieve all certification records that do not expire
     """
@@ -205,7 +205,7 @@ def get_valid_certs(query):
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
-def get_valid_certs(query):
+def get_invalid_certs(query):
     """Get invalid certifications
     Retrieve all certification records that have expired (expiry date is before or the current date)
     """
@@ -397,7 +397,7 @@ def get_certs_by_keyword(tkeyword, query):
 
 
 #retrieve records with same certificate type 
-@app.get('/certifications/certtype/<string:tcerttype>')
+@app.get('/certifications/certtype/<string:>')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
 @app.input(CertQuerySchema, 'query')
